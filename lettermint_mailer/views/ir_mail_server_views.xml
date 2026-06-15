@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ir_mail_server_form_lettermint" model="ir.ui.view">
+        <field name="name">ir.mail_server.form.lettermint</field>
+        <field name="model">ir.mail_server</field>
+        <field name="inherit_id" ref="base.ir_mail_server_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Lettermint = geen SMTP: verberg de SMTP-velden, toon alleen token + route -->
+            <xpath expr="//field[@name='smtp_encryption']" position="attributes">
+                <attribute name="invisible">smtp_authentication == 'lettermint'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='smtp_debug']" position="attributes">
+                <attribute name="invisible">smtp_authentication == 'lettermint'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='smtp_host']" position="attributes">
+                <attribute name="invisible">smtp_authentication == 'lettermint'</attribute>
+                <attribute name="required">smtp_authentication not in ('cli', 'lettermint')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='smtp_port']" position="attributes">
+                <attribute name="invisible">smtp_authentication == 'lettermint'</attribute>
+                <attribute name="required">smtp_authentication not in ('cli', 'lettermint')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='smtp_user']" position="attributes">
+                <attribute name="invisible">smtp_authentication in ('certificate', 'lettermint')</attribute>
+            </xpath>
+            <!-- EE19 (this 19.0 branch): smtp_user has a SEPARATE label element
+                 (CE18 doesn't) — hide it too, else orphan "Username" + broken grid -->
+            <xpath expr="//label[@for='smtp_user']" position="attributes">
+                <attribute name="invisible">smtp_authentication in ('certificate', 'lettermint')</attribute>
+            </xpath>
+
+            <!-- Password = de Lettermint Sending-token: ook tonen bij lettermint -->
+            <xpath expr="//field[@name='smtp_pass']" position="attributes">
+                <attribute name="invisible">smtp_authentication not in ('login', 'lettermint')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='smtp_pass']" position="after">
+                <field name="lettermint_route"
+                       invisible="smtp_authentication != 'lettermint'"
+                       placeholder="route-slug (optional)"/>
+                <field name="lettermint_test_recipient"
+                       invisible="smtp_authentication != 'lettermint'"
+                       placeholder="empty = your user email"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Incoming side: Lettermint as a webhook server-type (config-holder, no poll) -->
+    <record id="view_fetchmail_server_form_lettermint" model="ir.ui.view">
+        <field name="name">fetchmail.server.form.lettermint</field>
+        <field name="model">fetchmail.server</field>
+        <field name="inherit_id" ref="mail.view_email_server_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='server']/.." position="attributes">
+                <attribute name="invisible">server_type in ('local', 'lettermint')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user']/.." position="attributes">
+                <attribute name="invisible">server_type in ('local', 'lettermint')</attribute>
+            </xpath>
+            <!-- hidden for lettermint -> must not be required (else save blocks) -->
+            <xpath expr="//field[@name='server']" position="attributes">
+                <attribute name="required">server_type not in ('local', 'lettermint')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user']" position="attributes">
+                <attribute name="required">server_type not in ('local', 'lettermint')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='server_type_info']" position="after">
+                <group invisible="server_type != 'lettermint'" string="Lettermint Webhook">
+                    <field name="lettermint_webhook_url" readonly="1"/>
+                    <field name="lettermint_webhook_secret" password="True"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

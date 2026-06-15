@@ -1,6 +1,6 @@
 {
     "name": "Lettermint Mailer",
-    "version": "1.2.1",
+    "version": "1.2.0",
     "summary": "Outbound + inbound email via the Lettermint HTTP API (no SMTP/IMAP).",
     "description": """
 Lettermint Mailer

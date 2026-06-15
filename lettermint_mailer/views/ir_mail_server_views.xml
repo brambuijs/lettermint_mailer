@@ -24,11 +24,6 @@
             <xpath expr="//field[@name='smtp_user']" position="attributes">
                 <attribute name="invisible">smtp_authentication in ('certificate', 'lettermint')</attribute>
             </xpath>
-            <!-- EE19 (this 19.0 branch): smtp_user has a SEPARATE label element
-                 (CE18 doesn't) — hide it too, else orphan "Username" + broken grid -->
-            <xpath expr="//label[@for='smtp_user']" position="attributes">
-                <attribute name="invisible">smtp_authentication in ('certificate', 'lettermint')</attribute>
-            </xpath>
 
             <!-- Password = de Lettermint Sending-token: ook tonen bij lettermint -->
             <xpath expr="//field[@name='smtp_pass']" position="attributes">

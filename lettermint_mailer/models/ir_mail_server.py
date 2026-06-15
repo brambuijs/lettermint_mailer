@@ -130,27 +130,6 @@ class IrMailServer(models.Model):
         return msg_id
 
     # --- overrides ------------------------------------------------------------
-    def _connect__(self, *args, **kwargs):
-        """Odoo 19 `MailMail.send` opent eerst een SMTP-sessie via `_connect__`
-        (vóór `send_email`). Voor een Lettermint-server is er geen SMTP-host →
-        de core-connect crasht ('Unable to connect to SMTP Server'). Skip de
-        SMTP-connect voor Lettermint-servers: geef None terug (de `send_email`-
-        override verstuurt via de HTTP-API en negeert de sessie)."""
-        host = kwargs.get("host") or (args[0] if args else None)
-        mail_server_id = kwargs.get("mail_server_id")
-        server = self.browse()
-        if mail_server_id:
-            server = self.sudo().browse(mail_server_id).exists()
-        elif not host:
-            try:
-                res = self.sudo()._find_mail_server(kwargs.get("smtp_from"))
-                server = (res[0] if isinstance(res, (tuple, list)) else res) or self.browse()
-            except Exception:  # noqa: BLE001 — server-selectie mag nooit de send breken
-                server = self.browse()
-        if server and server._is_lettermint():
-            return None
-        return super()._connect__(*args, **kwargs)
-
     def send_email(self, message, mail_server_id=None, smtp_server=None, smtp_port=None,
                    smtp_user=None, smtp_password=None, smtp_encryption=None,
                    smtp_ssl_certificate=None, smtp_ssl_private_key=None,

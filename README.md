@@ -9,8 +9,12 @@ Odoo-module van **BB Open Solutions** voor uitgaande én inkomende e-mail via de
   de juiste Odoo-aliassen (catch-all/alias-routing), zonder IMAP-fetchmail.
 - **Test Connection**-knop op de mailserver-config (live API-check).
 
+## Versies / branches
+- **`main`** → Odoo **19.0** (v1.2.1)
+- **`18.0`** → Odoo **18.0** (v1.2.0)
+
 ## Installatie
-- Odoo 18.0 / 19.0
+- Odoo 18.0 / 19.0 (kies de juiste branch)
 - Afhankelijkheden: `mail` (core) + Python `requests`
 - Plaats `lettermint_mailer/` in je addons-path → installeren → configureer de
   Lettermint-API-token op de outgoing mail server + de inbound-webhook-route.
